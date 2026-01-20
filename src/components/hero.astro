@@ -3,6 +3,8 @@ import { Picture } from "astro:assets";
 import heroImage from "@/assets/hero-source.svg";
 import Link from "@/components/ui/link.astro";
 import { Icon } from "astro-icon/components";
+
+const { title, description, badge } = Astro.props;
 ---
 
 <main
@@ -20,30 +22,34 @@ import { Icon } from "astro-icon/components";
   <div>
     <h1
       class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-      OpenHand – Giving Clothes a Second Life
+      {title || "OpenHand – Giving Clothes a Second Life"}
     </h1>
     <p class="text-lg mt-4 text-slate-600 max-w-xl">
-      OpenHand is a non-profit association created in 2025 in Blonay – Saint-Légier. 
-      Our mission is simple: <strong>collect and distribute second-hand or new clothing 
-      to people in need</strong>.
+      {
+        description || (
+          <Fragment>
+            OpenHand is a non-profit association created in 2025 in Blonay –
+            Saint-Légier. Our mission is simple:{" "}
+            <strong>
+              collect and distribute second-hand or new clothing to people in
+              need
+            </strong>
+            .
+          </Fragment>
+        )
+      }
     </p>
     <div class="mt-6 flex flex-col sm:flex-row gap-3">
       <Link
-        href="#events"
+        href={Astro.currentLocale === "fr" ? "/fr/news" : "/news"}
         class="flex gap-1 items-center justify-center"
         rel="noopener">
-        <Icon class="text-white w-5 h-5" name="bx:calendar" />
-        View Upcoming Events
-      </Link>
-      <Link
-        size="lg"
-        style="outline"
-        rel="noopener"
-        href="#"
-        class="flex gap-1 items-center justify-center"
-        target="_blank">
-        <Icon class="text-black w-4 h-4" name="bx:heart" />
-        Join the Movement
+        <Icon class="text-white w-5 h-5" name="bx:news" />
+        {
+          Astro.currentLocale === "fr"
+            ? "Découvrez nos actualités"
+            : "Check us out"
+        }
       </Link>
     </div>
   </div>

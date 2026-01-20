@@ -1,0 +1,66 @@
+---
+import { fetchStrapi } from "../../../utils/strapi";
+import Layout from "../../../layouts/Layout.astro";
+import Container from "../../../components/container.astro";
+import Sectionhead from "../../../components/sectionhead.astro";
+
+const articles = await fetchStrapi({
+  endpoint: "articles",
+  query: { populate: "image" },
+  wrappedByKey: "data",
+});
+
+const newsItems = articles || [];
+
+// Helper to get image URL
+function getImageUrl(image: any) {
+  if (!image) return null;
+  const url = image?.formats?.medium?.url || image?.url;
+  // Strapi returns relative URLs for uploaded images
+  return url
+    ? url.startsWith("http")
+      ? url
+      : `${import.meta.env.STRAPI_URL || "http://localhost:1337"}${url}`
+    : null;
+}
+---
+
+<Layout title="Dernières Actualités">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Dernières Actualités</Fragment>
+      <Fragment slot="desc">
+        Découvrez les dernières nouvelles et mises à jour de notre association.
+      </Fragment>
+    </Sectionhead>
+
+    <div class="grid md:grid-cols-3 gap-10 mt-16">
+      {
+        newsItems.map((article: any) => (
+          <a href={`/news/${article.slug}`}>
+            <div class="relative flex flex-col bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transition-shadow duration-300">
+              {article.image && (
+                <div class="aspect-video overflow-hidden">
+                  <img
+                    src={getImageUrl(article.image)}
+                    alt={article.title}
+                    class="w-full h-full object-cover transition hover:scale-105 duration-300"
+                  />
+                </div>
+              )}
+              <div class="p-6">
+                <h2 class="text-2xl font-bold leading-tight text-gray-900 font-heading">
+                  {article.title}
+                </h2>
+                <p class="mt-4 text-gray-600 line-clamp-3">{article.excerpt}</p>
+                <div class="mt-4 text-sm text-gray-500">
+                  {new Date(article.publishedAt).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </Container>
+</Layout>

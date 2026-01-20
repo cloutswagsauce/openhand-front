@@ -1,0 +1,112 @@
+---
+const { labels = {} } = Astro.props;
+
+const uiLabels = {
+  emailPlaceholder: labels.emailPlaceholder || "Enter your email",
+  firstNamePlaceholder: labels.firstNamePlaceholder || "First Name",
+  lastNamePlaceholder: labels.lastNamePlaceholder || "Last Name",
+  birthDatePlaceholder: labels.birthDatePlaceholder || "Date of Birth",
+  buttonText: labels.buttonText || "Sign Up",
+  joiningMessage: labels.joiningMessage || "Joining...",
+  successMessage: labels.successMessage || "Success! check your email.",
+  errorMessage:
+    labels.errorMessage || "Something went wrong. Please try again.",
+};
+---
+
+<div class="w-full max-w-md mx-auto bg-white p-8 border rounded-lg shadow-sm">
+  <form id="newsletter-form" class="flex flex-col gap-4">
+    <div class="flex gap-4">
+      <input
+        type="text"
+        name="firstName"
+        required
+        placeholder={uiLabels.firstNamePlaceholder}
+        class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+      />
+      <input
+        type="text"
+        name="lastName"
+        required
+        placeholder={uiLabels.lastNamePlaceholder}
+        class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+      />
+    </div>
+    <input
+      type="date"
+      name="birthDate"
+      required
+      placeholder={uiLabels.birthDatePlaceholder}
+      class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+    />
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder={uiLabels.emailPlaceholder}
+      class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+    />
+    <button
+      type="submit"
+      class="w-full px-6 py-3 rounded-md bg-black text-white font-medium hover:bg-slate-800 transition whitespace-nowrap">
+      {uiLabels.buttonText}
+    </button>
+  </form>
+  <p id="form-message" class="mt-4 text-sm"></p>
+</div>
+
+<script
+  define:vars={{
+    strapiUrl: import.meta.env.PUBLIC_STRAPI_URL || "http://localhost:1337",
+    uiLabels,
+  }}
+>
+  const form = document.getElementById("newsletter-form");
+  const messageEl = document.getElementById("form-message");
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const email = formData.get("email");
+      const firstName = formData.get("firstName");
+      const lastName = formData.get("lastName");
+      const birthDate = formData.get("birthDate");
+
+      messageEl.textContent = uiLabels.joiningMessage;
+      messageEl.className = "mt-4 text-sm text-gray-600";
+
+      try {
+        const res = await fetch(`${strapiUrl}/api/members`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              email,
+              firstName,
+              lastName,
+              birthDate,
+              joinDate: new Date().toISOString(),
+            },
+          }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          messageEl.textContent = uiLabels.successMessage;
+          messageEl.className = "mt-4 text-sm text-green-600";
+          form.reset();
+        } else {
+          messageEl.textContent = data.error.message || uiLabels.errorMessage;
+          messageEl.className = "mt-4 text-sm text-red-600";
+        }
+      } catch (error) {
+        messageEl.textContent = uiLabels.errorMessage;
+        messageEl.className = "mt-4 text-sm text-red-600";
+      }
+    });
+  }
+</script>

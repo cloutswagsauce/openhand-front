@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Container from "../components/container.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
+import Sectionhead from "../components/sectionhead.astro";
+---
+
+<Layout title="Join the Association">
+  <Container>
+    <Sectionhead>
+        <Fragment slot="title">Join Us</Fragment>
+        <Fragment slot="desc">Become a member of our growing community.</Fragment>
+    </Sectionhead>
+    
+    <div class="mt-10">
+        <NewsletterForm />
+    </div>
+  </Container>
+</Layout>

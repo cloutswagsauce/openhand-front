@@ -1,0 +1,104 @@
+---
+import { fetchStrapi } from "../../utils/strapi";
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/container.astro";
+
+export async function getStaticPaths() {
+  const articles = await fetchStrapi({
+    endpoint: "articles",
+    wrappedByKey: "data",
+  });
+
+  if (!articles || !Array.isArray(articles)) {
+    return [];
+  }
+
+  return articles.map((article: any) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+
+// If we are in purely dynamic mode (SSR), we might need to fetch here if not using getStaticPaths or if falling back
+// But since this is likely SSG or Hybrid, we'll stick to getStaticPaths for now as is common in Astro.
+// However, if new articles are added often, we might want SSR. But let's stick to SSG for simplicity as per common Astro usage,
+// assuming re-builds on content change or valid fallback.
+// Actually, for a news site, SSR is better if they don't want to rebuild.
+// Let's check if the user specified SSR. The prompt implies "add news", usually implies dynamic.
+// But Astro default is static. Let's stick to `getStaticPaths` for now.
+// Wait, if I use `getStaticPaths`, the user has to rebuild to see new news.
+// That might be annoying for a "non tech guy".
+// Maybe I should switch to SSR for this page?
+// `astro.config.mjs` didn't show `output: 'server'` or `adapter`. So it's Static.
+// I will proceed with Static for now.
+
+function getImageUrl(image: any) {
+    if (!image) return null;
+    const url = image?.url;
+    return url ? (url.startsWith('http') ? url : `${import.meta.env.STRAPI_URL || 'http://localhost:1337'}${url}`) : null;
+}
+---
+
+<Layout title={article.title}>
+  <Container>
+    <div class="max-w-3xl mx-auto mt-14">
+      <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
+        News
+      </span>
+      <h1
+        class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"
+      >
+        {article.title}
+      </h1>
+      <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
+        <span class="text-gray-400">
+          {new Date(article.publishedAt).toLocaleDateString()}
+        </span>
+      </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto mt-6">
+        {article.image && (
+            <img 
+                src={getImageUrl(article.image)} 
+                alt={article.title} 
+                class="w-full rounded-xl shadow-xl mb-10"
+            />
+        )}
+      <div class="prose prose-lg prose-indigo mx-auto mt-6">
+        <!-- Render Blocks/RichText. For simplicity assuming Rich Text (markdown/html) or simple text blocks. 
+             Strapi 'blocks' field needs a renderer. 
+             If it's just a text field, we can render directly. 
+             If it's the new Blocks editor, we need a renderer.
+             For now, I'll attempt to render it as JSON plain or just basic text if complex.
+             But commonly people use a renderer library.
+             Let's try to just dump it for now or assume it's acceptable to just show text if it's simple.
+             Actually, let's use a simple mapping or just JSON stringify if valid for now to see structure in verification.
+             Wait, I created the schema with type 'blocks'. 
+             I need a way to render Strapi Blocks in Astro.
+             There isn't a native one installed. 
+             I'll just try to render the text content of the blocks for now.
+        -->
+        {article.content.map((block: any) => {
+            if (block.type === 'paragraph') {
+                return <p>{block.children.map((child: any) => child.text).join('')}</p>
+            }
+            if (block.type === 'heading') {
+                const Tag = `h${block.level}`;
+                return <Tag>{block.children.map((child: any) => child.text).join('')}</Tag>
+            }
+            return null;
+        })}
+      </div>
+      <div class="text-center mt-8">
+        <a
+          href="/news"
+          class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+          >← Back to News</a
+        >
+      </div>
+    </div>
+  </Container>
+</Layout>

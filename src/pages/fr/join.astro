@@ -1,0 +1,32 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/container.astro";
+import NewsletterForm from "../../components/NewsletterForm.astro";
+import Sectionhead from "../../components/sectionhead.astro";
+
+const labels = {
+  emailPlaceholder: "Votre email",
+  firstNamePlaceholder: "Prénom",
+  lastNamePlaceholder: "Nom",
+  birthDatePlaceholder: "Date de naissance",
+  buttonText: "Rejoindre",
+  joiningMessage: "Inscription en cours...",
+  successMessage: "Succès ! Vérifiez votre email.",
+  errorMessage: "Une erreur est survenue. Veuillez réessayer.",
+};
+---
+
+<Layout title="Rejoindre l'Association">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Rejoignez-nous</Fragment>
+      <Fragment slot="desc"
+        >Devenez membre de notre communauté grandissante.</Fragment
+      >
+    </Sectionhead>
+
+    <div class="mt-10">
+      <NewsletterForm labels={labels} />
+    </div>
+  </Container>
+</Layout>

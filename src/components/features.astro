@@ -2,59 +2,43 @@
 // @ts-ignore
 import { Icon } from "astro-icon/components";
 
-const features = [
+const { features } = Astro.props;
+
+const defaultFeatures = [
   {
-    title: "Bring Your Own Framework",
+    title: "Collect",
     description:
-      "Build your site using React, Svelte, Vue, Preact, web components, or just plain ol' HTML + JavaScript.",
-    icon: "bx:bxs-briefcase",
+      "We collect second-hand or new clothing from generous donors in our community.",
+    icon: "bx:bxs-t-shirt",
   },
   {
-    title: "100% Static HTML, No JS",
+    title: "Clean",
     description:
-      "Astro renders your entire page to static HTML, removing all JavaScript from your final build by default.",
-    icon: "bx:bxs-window-alt",
+      "Every item is carefully inspected, cleaned, and prepared to ensure dignity for the recipients.",
+    icon: "bx:bxs-washer",
   },
   {
-    title: "On-Demand Components",
+    title: "Redistribute",
     description:
-      "Need some JS? Astro can automatically hydrate interactive components when they become visible on the page.  ",
-    icon: "bx:bxs-data",
-  },
-  {
-    title: "Broad Integration",
-    description:
-      "Astro supports TypeScript, Scoped CSS, CSS Modules, Sass, Tailwind, Markdown, MDX, and any other npm packages.",
-    icon: "bx:bxs-bot",
-  },
-  {
-    title: "SEO Enabled",
-    description:
-      "Automatic sitemaps, RSS feeds, pagination and collections take the pain out of SEO and syndication. It just works!",
-    icon: "bx:bxs-file-find",
-  },
-  {
-    title: "Community",
-    description:
-      "Astro is an open source project powered by hundreds of contributors making thousands of individual contributions.",
-    icon: "bx:bxs-user",
+      "We distribute the clothing directly to people in need within our local area.",
+    icon: "bx:bxs-heart",
   },
 ];
+
+const items = features || defaultFeatures;
 ---
 
 <div class="mt-16 md:mt-0">
-  <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
-    Everything you need to start a website
-  </h2>
+  <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">Our Mission</h2>
   <p class="text-lg mt-4 text-slate-600">
-    Astro comes batteries included. It takes the best parts of state-of-the-art
-    tools and adds its own innovations.
+    We are dedicated to giving clothes a second life and helping those in need
+    through a simple, transparent process.
   </p>
 </div>
 
 <div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-16">
   {
-    features.map((item) => (
+    items.map((item) => (
       <div class="flex gap-4 items-start">
         <div class="mt-1 bg-black rounded-full  p-2 w-8 h-8 shrink-0">
           <Icon class="text-white" name={item.icon} />

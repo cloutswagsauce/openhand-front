@@ -1,0 +1,52 @@
+---
+import Container from "@/components/container.astro";
+import Features from "@/components/features.astro";
+import Hero from "@/components/hero.astro";
+import Layout from "@/layouts/Layout.astro";
+import NewsletterForm from "@/components/NewsletterForm.astro";
+
+const featuresFR = [
+  {
+    title: "Collecter",
+    description:
+      "Nous collectons des vêtements de seconde main ou neufs auprès de donateurs généreux de notre communauté.",
+    icon: "bx:bxs-t-shirt",
+  },
+  {
+    title: "Nettoyer",
+    description:
+      "Chaque article est soigneusement inspecté, nettoyé et préparé pour garantir la dignité des bénéficiaires.",
+    icon: "bx:bxs-washer",
+  },
+  {
+    title: "Redistribuer",
+    description:
+      "Nous distribuons les vêtements directement aux personnes dans le besoin de notre région.",
+    icon: "bx:bxs-heart",
+  },
+];
+---
+
+<Layout title="OpenHand - Accueil">
+  <Container>
+    <Hero
+      title="OpenHand – Donner une seconde vie aux vêtements"
+      description="OpenHand est une association à but non lucratif créée en 2025 à Blonay – Saint-Légier. Notre mission est simple : collecter et distribuer des vêtements de seconde main ou neufs aux personnes dans le besoin."
+    />
+    <Features features={featuresFR} />
+    <div class="mt-24">
+      <NewsletterForm
+        labels={{
+          emailPlaceholder: "Votre email",
+          firstNamePlaceholder: "Prénom",
+          lastNamePlaceholder: "Nom",
+          birthDatePlaceholder: "Date de naissance",
+          buttonText: "Rejoindre",
+          joiningMessage: "Inscription en cours...",
+          successMessage: "Succès ! Vérifiez votre email.",
+          errorMessage: "Une erreur est survenue. Veuillez réessayer.",
+        }}
+      />
+    </div>
+  </Container>
+</Layout>
